@@ -37,6 +37,11 @@ Occassionaly, there may be a retryable error (system timeout, etc).  At the pres
   
 # Examples
 **TBD**
+- NewCwClient
+- Get
+- Post
+- GetSystemInfo
+- Passing CwOptions
 
 # Contributing
 **TBD**

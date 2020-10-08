@@ -1,3 +1,4 @@
+// Connectwise-go is a simple API helper for the Connectwise Manage API
 package connectwise
 
 import (
@@ -9,15 +10,24 @@ import (
 	"net/http"
 )
 
-// System Info
+// System Info returned from Connectwise
+//	GET /system/info
 type SystemInfo struct {
-	Version        string `json:"version"`
-	IsCloud        bool   `json:"isCloud"`
-	ServerTimeZone string `json:"serverTimeZone"`
-	CloudRegion    string `json:"cloudRegion"`
+	Version        string        `json:"version"`
+	IsCloud        bool          `json:"isCloud"`
+	ServerTimeZone string        `json:"serverTimeZone"`
+	LicenseBits    []LicenseBits `json:"licenseBits"`
+	CloudRegion    string        `json:"cloudRegion"`
+}
+
+// LicenseBits is a sub field of the SystemInfo request
+type LicenseBits struct {
+	Name       string `json:"name"`
+	ActiveFlag string `json:"activeFlag"`
 }
 
 // ApiVersion is info from connectwise to help us create the correct base url
+// https://developer.connectwise.com/Best_Practices/Manage_Cloud_URL_Formatting?mt-learningpath=manage
 type ApiVersion struct {
 	CompanyName string `json:"CompanyName"`
 	Codebase    string `json:"Codebase"`
@@ -29,20 +39,22 @@ type ApiVersion struct {
 
 // CwClient is a 'holder' struct for everything needed to authenticate to cw api
 type CwClient struct {
-	apiVersion ApiVersion
+	ApiVersion ApiVersion
 	clientId   string
 	companyId  string
 	publicKey  string
 	privateKey string
 }
 
+// CwOption makes up one (of multiple) options that we can pass to function
+// Example: Setting the page size to 10
+//		cw := CwOption{Key: "pagesize", Value: "10"}
 type CwOption struct {
 	Key   string
 	Value string
 }
 
-// TODO possibly unexport Get and Post and just export higher level APIs?
-
+// GetSystemInfo will retrieve the system info from connectwise
 func (c CwClient) GetSystemInfo(options ...CwOption) (info SystemInfo, err error) {
 	j, err := c.Get("/system/info", options...)
 	if err != nil {
@@ -57,7 +69,7 @@ func (c CwClient) GetSystemInfo(options ...CwOption) (info SystemInfo, err error
 
 // Post is an api primitive to get data from the connectwise api
 func (c CwClient) Post(path string, payload interface{}, options ...CwOption) (string, error) {
-	baseUrl := fmt.Sprintf("https://api-na.myconnectwise.net/%sapis/3.0", c.apiVersion.Codebase)
+	baseUrl := fmt.Sprintf("https://api-na.myconnectwise.net/%sapis/3.0", c.ApiVersion.Codebase)
 	url := fmt.Sprintf("%s/%s", baseUrl, path)
 	client := &http.Client{}
 
@@ -111,7 +123,7 @@ func (c CwClient) Post(path string, payload interface{}, options ...CwOption) (s
 
 // Get is an api primitive to get data from the connectwise api
 func (c CwClient) Get(path string, options ...CwOption) (jsonData []byte, err error) {
-	baseUrl := fmt.Sprintf("https://api-na.myconnectwise.net/%sapis/3.0", c.apiVersion.Codebase)
+	baseUrl := fmt.Sprintf("https://api-na.myconnectwise.net/%sapis/3.0", c.ApiVersion.Codebase)
 	url := fmt.Sprintf("%s/%s", baseUrl, path)
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -160,7 +172,7 @@ func NewCwClient(site string, clientId string, company string, publicKey string,
 		return
 	}
 	cwclient = CwClient{
-		apiVersion: apiVersion,
+		ApiVersion: apiVersion,
 		clientId:   clientId,
 		companyId:  company,
 		publicKey:  publicKey,
