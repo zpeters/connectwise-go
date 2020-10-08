@@ -1,4 +1,3 @@
-// Connectwise-go is a simple API helper for the Connectwise Manage API
 package connectwise
 
 import (
@@ -13,17 +12,10 @@ import (
 // System Info returned from Connectwise
 //	GET /system/info
 type SystemInfo struct {
-	Version        string        `json:"version"`
-	IsCloud        bool          `json:"isCloud"`
-	ServerTimeZone string        `json:"serverTimeZone"`
-	LicenseBits    []LicenseBits `json:"licenseBits"`
-	CloudRegion    string        `json:"cloudRegion"`
-}
-
-// LicenseBits is a sub field of the SystemInfo request
-type LicenseBits struct {
-	Name       string `json:"name"`
-	ActiveFlag string `json:"activeFlag"`
+	Version        string `json:"version"`
+	IsCloud        bool   `json:"isCloud"`
+	ServerTimeZone string `json:"serverTimeZone"`
+	CloudRegion    string `json:"cloudRegion"`
 }
 
 // ApiVersion is info from connectwise to help us create the correct base url
@@ -68,7 +60,7 @@ func (c CwClient) GetSystemInfo(options ...CwOption) (info SystemInfo, err error
 }
 
 // Post is an api primitive to get data from the connectwise api
-func (c CwClient) Post(path string, payload interface{}, options ...CwOption) (string, error) {
+func (c CwClient) Post(path string, payload []byte, options ...CwOption) (string, error) {
 	baseUrl := fmt.Sprintf("https://api-na.myconnectwise.net/%sapis/3.0", c.ApiVersion.Codebase)
 	url := fmt.Sprintf("%s/%s", baseUrl, path)
 	client := &http.Client{}
@@ -169,7 +161,7 @@ func (c CwClient) Get(path string, options ...CwOption) (jsonData []byte, err er
 func NewCwClient(site string, clientId string, company string, publicKey string, privateKey string) (cwclient CwClient, err error) {
 	apiVersion, err := GetApiVersion(site, company)
 	if err != nil {
-		return
+		return cwclient, fmt.Errorf("Cannot get apiversion for %s at %s: %w", company, site, err)
 	}
 	cwclient = CwClient{
 		ApiVersion: apiVersion,
@@ -190,9 +182,6 @@ func GetApiVersion(site string, company string) (version ApiVersion, err error) 
 		return
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		return
-	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
