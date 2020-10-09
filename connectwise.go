@@ -168,6 +168,8 @@ func NewCwClient(site string, clientID string, company string, publicKey string,
 // is required is the site and company, no authentication is needed at this point
 func GetAPIVersion(site string, company string) (version APIVersion, err error) {
 	url := fmt.Sprintf("https://%s/login/companyinfo/%s", site, company)
+	// #nosec - gosec will detect this as a G107 error
+	// the point of this is to request a "variable" url
 	resp, err := http.Get(url)
 	if err != nil {
 		return
@@ -179,7 +181,10 @@ func GetAPIVersion(site string, company string) (version APIVersion, err error) 
 		return
 	}
 
-	json.Unmarshal(body, &version)
+	err = json.Unmarshal(body, &version)
+	if err != nil {
+		return version, fmt.Errorf("Can't get unmarshal data %w", err)
+	}
 
 	return
 }
