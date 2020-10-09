@@ -55,9 +55,9 @@ func TestNewCwClient(t *testing.T) {
 	var invalidPublicKey = "12345"
 	var invalidPrivateKey = "12345"
 
-	// valid testing credentials - read from .env
-	err := godotenv.Load()
-	require.NoError(t, err)
+	// load local testing credentials - read from .env
+	// This could be an error if we are loading from the environment instead
+	_ = godotenv.Load()
 	var validSite = os.Getenv("TEST_SITE")
 	var validClientID = os.Getenv("TEST_CLIENTID")
 	var validCompany = os.Getenv("TEST_COMPANY")
@@ -104,8 +104,8 @@ func TestNewCwClient(t *testing.T) {
 
 func TestGetSystemInfo(t *testing.T) {
 	// valid testing credentials - read from .env
-	err := godotenv.Load()
-	require.NoError(t, err)
+	// This could be an error if we are loading from the environment instead
+	_ = godotenv.Load()
 	var validSite = os.Getenv("TEST_SITE")
 	var validClientID = os.Getenv("TEST_CLIENTID")
 	var validCompany = os.Getenv("TEST_COMPANY")
@@ -142,8 +142,8 @@ func TestGetSystemInfo(t *testing.T) {
 
 func TestGet(t *testing.T) {
 	// valid testing credentials - read from .env
-	err := godotenv.Load()
-	require.NoError(t, err)
+	// This could be an error if we are loading from the environment instead
+	_ = godotenv.Load()
 	var validSite = os.Getenv("TEST_SITE")
 	var validClientID = os.Getenv("TEST_CLIENTID")
 	var validCompany = os.Getenv("TEST_COMPANY")
@@ -179,8 +179,8 @@ func TestGet(t *testing.T) {
 
 func TestPost(t *testing.T) {
 	// valid testing credentials - read from .env
-	err := godotenv.Load()
-	require.NoError(t, err)
+	// This could be an error if we are loading from the environment instead
+	_ = godotenv.Load()
 	var validSite = os.Getenv("TEST_SITE")
 	var validClientID = os.Getenv("TEST_CLIENTID")
 	var validCompany = os.Getenv("TEST_COMPANY")
