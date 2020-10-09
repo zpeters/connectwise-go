@@ -30,5 +30,11 @@ jobs:
             dep ensure
         fi
 
-    #- name: Test
-    #  run: go test -v .
+    - name: Test
+      env:
+          TEST_SITE: ${{ secrets.TEST_SITE }}
+          TEST_CLIENTID: ${{ secrets.TEST_CLIENTID }}
+          TEST_COMPANY: ${{ secrets.TEST_COMPANY }}
+          TEST_PUBKEY: ${{ secrets.TEST_PUBKEY }}
+          TEST_PRIVKEY: ${{ secrets.TEST_PRIVKEY }}
+      run: go test -v .
