@@ -47,10 +47,78 @@ Occassionaly, there may be a retryable error (system timeout, etc).  At the pres
 # Examples
 **TBD**
 - NewCwClient
+``` go
+site := "na.myconnectwise.net"
+clientid := "123-123-123-2134"
+company := "myco"
+publicKey := "my-public-key" 
+privateKey := "my-private-key" 
+client, err := NewCwClient(site, clientid, company, publicKey, privateKey)
+...
+```
 - Get
+``` go
+client, err := NewCwClient(site, clientid, company, publicKey, privateKey)
+if err != nil {
+  // do something
+ }
+ jsonResponseString, err := client.Get("/system/info")
+ ...
+```
 - Post
+``` go
+client, err := NewCwClient(site, clientid, company, publicKey, privateKey)
+if err != nil {
+  // do something
+ }
+ 
+ // this could be a raw string our you could
+ // encode it from a struct
+activityJSONPayload := []byte("{name: 'Test Post for Connectwise Go Unit Test', assignTo: { identifier: 'aMember'}}") 
+resp, err := tc.client.Post("/sales/activities, activityJSONPayload)
+if err != nil {
+  // do something
+ }
+ 
+ // possibly do someting with 'resp'
+ // it is the response from the server of a (hopefully)
+ // successful post
+ fmt.Println(resp)
+...
+```
 - GetSystemInfo
+``` go
+  // create our client as above...
+  resp, err := client.GetSystemInfo()
+  if err != nil {
+  // do something
+ }
+ 
+ // resp is a SystemInfo struct
+ fmt.Println("Version: ", resp.Version)
+```
 - Passing CwOptions
+```go
+client, err := NewCwClient(site, clientid, company, publicKey, privateKey)
+if err != nil {
+  // do something
+ }
+ 
+ // get all members
+ allMembers, err := client.Get("/system/members")
+ if err != nil {
+  // do something
+ }
+ 
+ // get a few members
+ pageSize := CwOption{"Key": "pagesize", "Value": "3"}
+  someMembers, err := client.Get("/system/members", pageSize)
+ if err != nil {
+  // do something
+ }
+ 
+ ...
+```
 
 # Contributing
 Please see [CONTRIBUTING.md](CONTRIBUTING.md)
