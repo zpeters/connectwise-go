@@ -2,7 +2,6 @@ package connectwise
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"testing"
 
@@ -80,7 +79,7 @@ func TestNewCwClient(t *testing.T) {
 				CompanyName: validCompany,
 				Codebase:    "v2020_3/",
 				VersionCode: "v2020.3",
-				CompanyID:   validCompany,
+				CompanyID:   "buscominc",
 				IsCloud:     true,
 				SiteURL:     "api-na.myconnectwise.net",
 			},
@@ -163,8 +162,8 @@ func TestGet(t *testing.T) {
 		wantedError    error
 	}{
 		{cwClient, "/system/info", nil, "isCloud", nil},
-		{cwClient, "/system/members", []CwOption{CwOption{Key: "pagesize", Value: "1"}}, "identifier", nil},
-		{cwClient, "/system/members", []CwOption{CwOption{Key: "pagesize", Value: "5"}, CwOption{Key: "page", Value: "2"}}, "identifier", nil},
+		{cwClient, "/system/members", []CwOption{{Key: "pagesize", Value: "1"}}, "identifier", nil},
+		{cwClient, "/system/members", []CwOption{{Key: "pagesize", Value: "5"}, {Key: "page", Value: "2"}}, "identifier", nil},
 	}
 	for _, tc := range tests {
 		got, err := tc.client.Get(tc.path, tc.options...)
@@ -189,7 +188,7 @@ func TestPost(t *testing.T) {
 	var validPrivateKey = os.Getenv("TEST_PRIVKEY")
 
 	// valid activity json snippet
-	activityJSON := []byte("{\"name\":\"mything\",\"assignTo\":{\"identifier\":\"zpeters\"}}")
+	activityJSON := []byte("{name: 'Test Post for Connectwise Go Unit Test', assignTo: { identifier: 'zpeters'}}")
 
 	// create a good client
 	cwClient, err := NewCwClient(validSite, validClientID, validCompany, validPublicKey, validPrivateKey)
@@ -203,11 +202,10 @@ func TestPost(t *testing.T) {
 		wantedContains string
 		wantedError    error
 	}{
-		{cwClient, "/sales/activities", activityJSON, nil, "isCloud", nil},
+		{cwClient, "/sales/activities", activityJSON, nil, "Test Post for Connectwise Go Unit Test", nil},
 	}
 	for _, tc := range tests {
 		got, err := tc.client.Post(tc.path, tc.payload, tc.options...)
-		fmt.Println(got)
 		if tc.wantedError == nil {
 			require.NoError(t, err)
 			require.Contains(t, string(got), tc.wantedContains)

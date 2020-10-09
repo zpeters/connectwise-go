@@ -1,6 +1,7 @@
 package connectwise
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -60,64 +61,48 @@ func (c CwClient) GetSystemInfo(options ...CwOption) (info SystemInfo, err error
 func (c CwClient) Post(path string, payload []byte, options ...CwOption) (string, error) {
 	baseURL := fmt.Sprintf("https://api-na.myconnectwise.net/%sapis/3.0", c.APIVersion.Codebase)
 	url := fmt.Sprintf("%s/%s", baseURL, path)
-	fmt.Println(url)
+	client := &http.Client{}
 
-	return "isCloud", nil
+	// Setup the post request
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(payload))
+	if err != nil {
+		return "", err
+	}
+
+	// Header setup
+	// set client id
+	req.Header.Set("ClientID", c.clientID)
+	// set authorization base64(companyid+public:private)
+	auth := fmt.Sprintf("%s+%s:%s", c.companyID, c.publicKey, c.privateKey)
+	encoded := base64.StdEncoding.EncodeToString([]byte(auth))
+	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", encoded))
+	// content type
+	req.Header.Set("Content-Type", "application/json")
+
+	/// query parameters, if any
+	if len(options) > 0 {
+		q := req.URL.Query()
+		for _, opt := range options {
+			q.Add(opt.Key, opt.Value)
+		}
+		req.URL.RawQuery = q.Encode()
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	if resp.StatusCode != 201 {
+		return "", fmt.Errorf("Non-201 status: Code: %d Status: %s Message: %s", resp.StatusCode, resp.Status, body)
+	}
+	return string(body), nil
 }
-
-// // Post is an api primitive to get data from the connectwise api
-// func (c CwClient) Post(path string, payload []byte, options ...CwOption) (string, error) {
-// 	baseUrl := fmt.Sprintf("https://api-na.myconnectwise.net/%sapis/3.0", c.ApiVersion.Codebase)
-// 	url := fmt.Sprintf("%s/%s", baseUrl, path)
-// 	client := &http.Client{}
-
-// 	// Convert payload to json
-// 	jsonPayload, err := json.Marshal(payload)
-// 	if err != nil {
-// 		return "", err
-// 	}
-
-// 	// Setup the post request
-// 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonPayload))
-// 	if err != nil {
-// 		return "", err
-// 	}
-
-// 	/// Header setup
-// 	// set client id
-// 	req.Header.Set("ClientID", c.clientId)
-// 	// set authorization base64(companyid+public:private)
-// 	auth := fmt.Sprintf("%s+%s:%s", c.companyId, c.publicKey, c.privateKey)
-// 	encoded := base64.StdEncoding.EncodeToString([]byte(auth))
-// 	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", encoded))
-// 	// content type
-// 	req.Header.Set("Content-Type", "application/json")
-
-// 	/// query parameters, if any
-// 	if len(options) > 0 {
-// 		q := req.URL.Query()
-// 		for _, opt := range options {
-// 			q.Add(opt.Key, opt.Value)
-// 		}
-// 		req.URL.RawQuery = q.Encode()
-// 	}
-
-// 	resp, err := client.Do(req)
-// 	if err != nil {
-// 		return "", err
-// 	}
-// 	defer resp.Body.Close()
-
-// 	body, err := ioutil.ReadAll(resp.Body)
-// 	if err != nil {
-// 		return "", err
-// 	}
-
-// 	if resp.StatusCode != 201 {
-// 		return "", fmt.Errorf("Non-201 status: Code: %d Status: %s Message: %s", resp.StatusCode, resp.Status, body)
-// 	}
-// 	return string(body), nil
-// }
 
 // Get is an api primitive to get data from the connectwise api
 func (c CwClient) Get(path string, options ...CwOption) (jsonData []byte, err error) {
