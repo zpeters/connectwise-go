@@ -1,4 +1,8 @@
 # Connectwise
+![Go Build](https://github.com/zpeters/connectwise-go/workflows/Go%20Build/badge.svg)
+![Go Test](https://github.com/zpeters/connectwise-go/workflows/Go%20Test/badge.svg)
+![Go Lint](https://github.com/zpeters/connectwise-go/workflows/Go%20Lint/badge.svg)
+![Run Gosec](https://github.com/zpeters/connectwise-go/workflows/Run%20Gosec/badge.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/zpeters/connectwise-go)](https://goreportcard.com/report/github.com/zpeters/connectwise-go)
 [![License](https://img.shields.io/github/license/zpeters/connectwise-go)](https://img.shields.io/github/license/zpeters/connectwise-go)
 
