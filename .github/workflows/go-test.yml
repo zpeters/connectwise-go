@@ -11,6 +11,12 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+     env:
+          TEST_SITE: ${{ secrets.TEST_SITE }}
+          TEST_CLIENTID: ${{ secrets.TEST_CLIENTID }}
+          TEST_COMPANY: ${{ secrets.TEST_COMPANY }}
+          TEST_PUBKEY: ${{ secrets.TEST_PUBKEY }}
+          TEST_PRIVKEY: ${{ secrets.TEST_PRIVKEY }}
     steps:
 
     - name: Set up Go 1.x
@@ -31,10 +37,4 @@ jobs:
         fi
 
     - name: Test
-      env:
-          TEST_SITE: ${{ secrets.TEST_SITE }}
-          TEST_CLIENTID: ${{ secrets.TEST_CLIENTID }}
-          TEST_COMPANY: ${{ secrets.TEST_COMPANY }}
-          TEST_PUBKEY: ${{ secrets.TEST_PUBKEY }}
-          TEST_PRIVKEY: ${{ secrets.TEST_PRIVKEY }}
       run: go test -v .
