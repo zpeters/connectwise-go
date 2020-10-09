@@ -28,6 +28,7 @@ In this module there is the idea of "low" and "high" level commands.  The low le
 
 
 | Level | Command | Parameters | Returns |
+|-------|---------|---------------|------|
 | Low   | Get     | path, options | JSON | 
 | Low   | Post     | path, payload, options | JSON | 
 | High  | GetSystemInfo | _NA_ | SystemInfo |
