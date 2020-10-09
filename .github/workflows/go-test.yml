@@ -2,9 +2,9 @@ name: Go Test
 
 on:
   push:
-    branches: [ fix-tests ]
+    branches: [ master ]
   pull_request:
-    branches: [ fix-tests ]
+    branches: [ master ]
 
 jobs:
 
