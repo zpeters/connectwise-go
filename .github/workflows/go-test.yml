@@ -31,4 +31,6 @@ jobs:
         fi
 
     - name: Test
+      env:
+          TEST_SITE: ${{ secrets.TEST_SITE }}
       run: go test -v .
