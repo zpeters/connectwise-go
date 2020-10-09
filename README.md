@@ -53,7 +53,7 @@ Occassionaly, there may be a retryable error (system timeout, etc).  At the pres
 - Passing CwOptions
 
 # Contributing
-**TBD**
-  
+Please see [CONTRIBUTING.md](CONTRIBUTING.md)
+
 # License
-**TBD**
+Please see [LICENSE](LICENSE)
