@@ -1,4 +1,6 @@
-# Connectwise go module
+# Connectwise
+[![Go Report Card](https://goreportcard.com/badge/github.com/zpeters/connectwise-go)](https://goreportcard.com/report/github.com/zpeters/connectwise-go)
+[![License](https://img.shields.io/github/license/zpeters/connectwise-go)](https://img.shields.io/github/license/zpeters/connectwise-go)
 
 **Version** v0.0.1
 
@@ -47,4 +49,7 @@ Occassionaly, there may be a retryable error (system timeout, etc).  At the pres
 - Passing CwOptions
 
 # Contributing
+**TBD**
+  
+# License
 **TBD**
