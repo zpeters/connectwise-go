@@ -1,5 +1,7 @@
 # Connectwise go module
 
+**Version** v0.0.1
+
 *Connectwise* is a very simple api helper for the Connectwise Manage API.  It is meant firstly to just avoid some code duplication. It does **not** come close to covering the entire API, but it does help get you started
 
 # Prerequisites
