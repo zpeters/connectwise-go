@@ -32,7 +32,7 @@ jobs:
 
     - name: Test
       env:
-          TEST_SITE: ${{ secrets.TEST_SITE }}
+          TEST_SITE: "na.myconnectwise.net"
           TEST_CLIENTID: ${{ secrets.TEST_CLIENTID }}
           TEST_COMPANY: ${{ secrets.TEST_COMPANY }}
           TEST_PUBKEY: ${{ secrets.TEST_PUBKEY }}
