@@ -14,36 +14,36 @@ func TestGetApiVersion(t *testing.T) {
 	tests := []struct {
 		site             string
 		company          string
-		wantedApiVersion ApiVersion
+		wantedAPIVersion APIVersion
 		wantedError      error
 	}{
-		{"na.myconnectwise.net", "abcdef", ApiVersion{
+		{"na.myconnectwise.net", "abcdef", APIVersion{
 			CompanyName: "abcdef",
 			Codebase:    "v2020_3/",
 			VersionCode: "v2020.3",
 			CompanyID:   "abcdef",
 			IsCloud:     true,
-			SiteUrl:     "api-na.myconnectwise.net",
+			SiteURL:     "api-na.myconnectwise.net",
 		}, nil},
-		{"staging.connectwisedev.com", "abcdef", ApiVersion{
+		{"staging.connectwisedev.com", "abcdef", APIVersion{
 			CompanyName: "abcdef",
 			Codebase:    "v2020_3/",
 			VersionCode: "v2020.4",
 			CompanyID:   "abcdef",
 			IsCloud:     true,
-			SiteUrl:     "api-staging.connectwisedev.com",
+			SiteURL:     "api-staging.connectwisedev.com",
 		}, nil},
-		{"fake.fake.com", "abcdef", ApiVersion{}, errors.New("Get \"https://fake.fake.com/login/companyinfo/abcdef\": dial tcp: lookup fake.fake.com: no such host")},
+		{"fake.fake.com", "abcdef", APIVersion{}, errors.New("Get \"https://fake.fake.com/login/companyinfo/abcdef\": dial tcp: lookup fake.fake.com: no such host")},
 	}
 
 	for _, tc := range tests {
-		got, err := GetApiVersion(tc.site, tc.company)
+		got, err := GetAPIVersion(tc.site, tc.company)
 		if tc.wantedError == nil {
 			require.NoError(t, err)
-			require.Equal(t, tc.wantedApiVersion, got)
+			require.Equal(t, tc.wantedAPIVersion, got)
 		} else {
 			require.EqualError(t, err, tc.wantedError.Error())
-			require.Equal(t, tc.wantedApiVersion, got)
+			require.Equal(t, tc.wantedAPIVersion, got)
 		}
 	}
 }
@@ -51,7 +51,7 @@ func TestGetApiVersion(t *testing.T) {
 func TestNewCwClient(t *testing.T) {
 	// invalid credentials
 	var invalidSite = "abcdef"
-	var invalidClientId = "12345"
+	var invalidClientID = "12345"
 	var invalidCompany = "12345"
 	var invalidPublicKey = "12345"
 	var invalidPrivateKey = "12345"
@@ -60,7 +60,7 @@ func TestNewCwClient(t *testing.T) {
 	err := godotenv.Load()
 	require.NoError(t, err)
 	var validSite = os.Getenv("TEST_SITE")
-	var validClientId = os.Getenv("TEST_CLIENTID")
+	var validClientID = os.Getenv("TEST_CLIENTID")
 	var validCompany = os.Getenv("TEST_COMPANY")
 	var validPublicKey = os.Getenv("TEST_PUBKEY")
 	var validPrivateKey = os.Getenv("TEST_PRIVKEY")
@@ -74,19 +74,19 @@ func TestNewCwClient(t *testing.T) {
 		wantedClient CwClient
 		wantedError  error
 	}{
-		{invalidSite, invalidClientId, invalidCompany, invalidPublicKey, invalidPrivateKey, CwClient{}, errors.New("Cannot get apiversion for 12345 at abcdef: Get \"https://abcdef/login/companyinfo/12345\": dial tcp: lookup abcdef: no such host")},
-		{validSite, validClientId, validCompany, validPublicKey, validPrivateKey, CwClient{
-			ApiVersion: ApiVersion{
+		{invalidSite, invalidClientID, invalidCompany, invalidPublicKey, invalidPrivateKey, CwClient{}, errors.New("Cannot get apiversion for 12345 at abcdef: Get \"https://abcdef/login/companyinfo/12345\": dial tcp: lookup abcdef: no such host")},
+		{validSite, validClientID, validCompany, validPublicKey, validPrivateKey, CwClient{
+			APIVersion: APIVersion{
 				CompanyName: validCompany,
 				Codebase:    "v2020_3/",
 				VersionCode: "v2020.3",
 				CompanyID:   validCompany,
 				IsCloud:     true,
-				SiteUrl:     "api-na.myconnectwise.net",
+				SiteURL:     "api-na.myconnectwise.net",
 			},
 
-			companyId:  validCompany,
-			clientId:   validClientId,
+			companyID:  validCompany,
+			clientID:   validClientID,
 			publicKey:  validPublicKey,
 			privateKey: validPrivateKey,
 		}, nil},
@@ -108,13 +108,13 @@ func TestGetSystemInfo(t *testing.T) {
 	err := godotenv.Load()
 	require.NoError(t, err)
 	var validSite = os.Getenv("TEST_SITE")
-	var validClientId = os.Getenv("TEST_CLIENTID")
+	var validClientID = os.Getenv("TEST_CLIENTID")
 	var validCompany = os.Getenv("TEST_COMPANY")
 	var validPublicKey = os.Getenv("TEST_PUBKEY")
 	var validPrivateKey = os.Getenv("TEST_PRIVKEY")
 
 	// create a good client
-	cwClient, err := NewCwClient(validSite, validClientId, validCompany, validPublicKey, validPrivateKey)
+	cwClient, err := NewCwClient(validSite, validClientID, validCompany, validPublicKey, validPrivateKey)
 	require.NoError(t, err)
 
 	tests := []struct {
@@ -146,13 +146,13 @@ func TestGet(t *testing.T) {
 	err := godotenv.Load()
 	require.NoError(t, err)
 	var validSite = os.Getenv("TEST_SITE")
-	var validClientId = os.Getenv("TEST_CLIENTID")
+	var validClientID = os.Getenv("TEST_CLIENTID")
 	var validCompany = os.Getenv("TEST_COMPANY")
 	var validPublicKey = os.Getenv("TEST_PUBKEY")
 	var validPrivateKey = os.Getenv("TEST_PRIVKEY")
 
 	// create a good client
-	cwClient, err := NewCwClient(validSite, validClientId, validCompany, validPublicKey, validPrivateKey)
+	cwClient, err := NewCwClient(validSite, validClientID, validCompany, validPublicKey, validPrivateKey)
 	require.NoError(t, err)
 
 	tests := []struct {
@@ -183,16 +183,16 @@ func TestPost(t *testing.T) {
 	err := godotenv.Load()
 	require.NoError(t, err)
 	var validSite = os.Getenv("TEST_SITE")
-	var validClientId = os.Getenv("TEST_CLIENTID")
+	var validClientID = os.Getenv("TEST_CLIENTID")
 	var validCompany = os.Getenv("TEST_COMPANY")
 	var validPublicKey = os.Getenv("TEST_PUBKEY")
 	var validPrivateKey = os.Getenv("TEST_PRIVKEY")
 
 	// valid activity json snippet
-	activityJson := []byte("{\"name\":\"mything\",\"assignTo\":{\"identifier\":\"zpeters\"}}")
+	activityJSON := []byte("{\"name\":\"mything\",\"assignTo\":{\"identifier\":\"zpeters\"}}")
 
 	// create a good client
-	cwClient, err := NewCwClient(validSite, validClientId, validCompany, validPublicKey, validPrivateKey)
+	cwClient, err := NewCwClient(validSite, validClientID, validCompany, validPublicKey, validPrivateKey)
 	require.NoError(t, err)
 
 	tests := []struct {
@@ -203,7 +203,7 @@ func TestPost(t *testing.T) {
 		wantedContains string
 		wantedError    error
 	}{
-		{cwClient, "/sales/activities", activityJson, nil, "isCloud", nil},
+		{cwClient, "/sales/activities", activityJSON, nil, "isCloud", nil},
 	}
 	for _, tc := range tests {
 		got, err := tc.client.Post(tc.path, tc.payload, tc.options...)
