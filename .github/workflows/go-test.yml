@@ -38,6 +38,5 @@ jobs:
           TEST_PUBKEY: ${{ secrets.TEST_PUBKEY }}
           TEST_PRIVKEY: ${{ secrets.TEST_PRIVKEY }}
       run: |
-        echo "TEST_SITE"
         echo $TEST_SITE
         go test -v .
