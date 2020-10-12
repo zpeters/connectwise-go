@@ -30,10 +30,10 @@ type APIVersion struct {
 // CwClient is a 'holder' struct for everything needed to authenticate to cw api
 type CwClient struct {
 	APIVersion APIVersion
-	clientID   string
-	companyID  string
-	publicKey  string
-	privateKey string
+	ClientID   string
+	CompanyID  string
+	PublicKey  string
+	PrivateKey string
 }
 
 // CwOption makes up one (of multiple) options that we can pass to function
@@ -71,9 +71,9 @@ func (c CwClient) Post(path string, payload []byte, options ...CwOption) (string
 
 	// Header setup
 	// set client id
-	req.Header.Set("ClientID", c.clientID)
+	req.Header.Set("ClientID", c.ClientID)
 	// set authorization base64(companyid+public:private)
-	auth := fmt.Sprintf("%s+%s:%s", c.companyID, c.publicKey, c.privateKey)
+	auth := fmt.Sprintf("%s+%s:%s", c.CompanyID, c.PublicKey, c.PrivateKey)
 	encoded := base64.StdEncoding.EncodeToString([]byte(auth))
 	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", encoded))
 	// content type
@@ -116,9 +116,9 @@ func (c CwClient) Get(path string, options ...CwOption) (jsonData []byte, err er
 
 	/// Header Authentication
 	// set client id
-	req.Header.Set("ClientID", c.clientID)
+	req.Header.Set("ClientID", c.ClientID)
 	// set authorization base64(companyid+public:private)
-	auth := fmt.Sprintf("%s+%s:%s", c.companyID, c.publicKey, c.privateKey)
+	auth := fmt.Sprintf("%s+%s:%s", c.CompanyID, c.PublicKey, c.PrivateKey)
 	encoded := base64.StdEncoding.EncodeToString([]byte(auth))
 	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", encoded))
 
@@ -156,10 +156,10 @@ func NewCwClient(site string, clientID string, company string, publicKey string,
 	}
 	cwclient = CwClient{
 		APIVersion: apiVersion,
-		clientID:   clientID,
-		companyID:  company,
-		publicKey:  publicKey,
-		privateKey: privateKey,
+		ClientID:   clientID,
+		CompanyID:  company,
+		PublicKey:  publicKey,
+		PrivateKey: privateKey,
 	}
 	return
 }

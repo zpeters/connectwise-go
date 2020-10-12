@@ -84,10 +84,10 @@ func TestNewCwClient(t *testing.T) {
 				SiteURL:     "api-na.myconnectwise.net",
 			},
 
-			companyID:  validCompany,
-			clientID:   validClientID,
-			publicKey:  validPublicKey,
-			privateKey: validPrivateKey,
+			CompanyID:  validCompany,
+			ClientID:   validClientID,
+			PublicKey:  validPublicKey,
+			PrivateKey: validPrivateKey,
 		}, nil},
 	}
 	for _, tc := range tests {
