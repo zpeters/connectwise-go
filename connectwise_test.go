@@ -73,7 +73,7 @@ func TestNewCwClient(t *testing.T) {
 		wantedClient CwClient
 		wantedError  error
 	}{
-		{invalidSite, invalidClientID, invalidCompany, invalidPublicKey, invalidPrivateKey, CwClient{}, errors.New("Cannot get apiversion for 12345 at abcdef: Get \"https://abcdef/login/companyinfo/12345\": dial tcp: lookup abcdef: no such host")},
+		{invalidSite, invalidClientID, invalidCompany, invalidPublicKey, invalidPrivateKey, CwClient{}, errors.New("Cannot get apiversion for 12345 at abcdef: Get \"https://abcdef/login/companyinfo/12345\"")},
 		{validSite, validClientID, validCompany, validPublicKey, validPrivateKey, CwClient{
 			APIVersion: APIVersion{
 				CompanyName: validCompany,
@@ -96,7 +96,7 @@ func TestNewCwClient(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tc.wantedClient, got)
 		} else {
-			require.EqualError(t, err, tc.wantedError.Error())
+			require.Contains(t, err.Error(), tc.wantedError.Error())
 			require.Equal(t, tc.wantedClient, got)
 		}
 	}
