@@ -3,6 +3,7 @@ package connectwise
 import (
 	"errors"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/joho/godotenv"
@@ -19,7 +20,7 @@ func TestGetApiVersion(t *testing.T) {
 		{"na.myconnectwise.net", "abcdef", APIVersion{
 			CompanyName: "abcdef",
 			Codebase:    "v2020_3/",
-			VersionCode: "v2020.3",
+			VersionCode: "v2020.4",
 			CompanyID:   "abcdef",
 			IsCloud:     true,
 			SiteURL:     "api-na.myconnectwise.net",
@@ -117,26 +118,26 @@ func TestGetSystemInfo(t *testing.T) {
 	require.NoError(t, err)
 
 	tests := []struct {
-		client      CwClient
-		wantedInfo  SystemInfo
-		wantedError error
+		client             CwClient
+		wantedVersionMajor string
+		wantedCloud        bool
+		wantedTimeZone     string
+		wantedRegion       string
+		wantedError        error
 	}{
-		{cwClient, SystemInfo{
-			Version:        "v2020.3.75324",
-			IsCloud:        true,
-			ServerTimeZone: "Eastern Standard Time",
-			CloudRegion:    "NA",
-		}, nil},
+		{cwClient, "v2020", true, "Eastern Standard Time", "NA", nil},
 	}
-	for _, tc := range tests {
-		got, err := tc.client.GetSystemInfo()
-		if tc.wantedError == nil {
+	for _, tt := range tests {
+		got, err := tt.client.GetSystemInfo()
+		if tt.wantedError == nil {
 			require.NoError(t, err)
-			require.Equal(t, tc.wantedInfo, got)
 		} else {
-			require.EqualError(t, err, tc.wantedError.Error())
-			require.Equal(t, tc.wantedInfo, got)
+			require.EqualError(t, err, tt.wantedError.Error())
 		}
+		require.Equal(t, tt.wantedVersionMajor, strings.Split(got.Version, ".")[0])
+		require.Equal(t, tt.wantedCloud, got.IsCloud)
+		require.Equal(t, tt.wantedTimeZone, got.ServerTimeZone)
+		require.Equal(t, tt.wantedRegion, got.CloudRegion)
 	}
 }
 
