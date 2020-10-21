@@ -103,6 +103,82 @@ func TestNewCwClient(t *testing.T) {
 	}
 }
 
+func TestGetAll(t *testing.T) {
+	// valid testing credentials - read from .env
+	// This could be an error if we are loading from the environment instead
+	_ = godotenv.Load()
+	var validSite = os.Getenv("TEST_SITE")
+	var validClientID = os.Getenv("TEST_CLIENTID")
+	var validCompany = os.Getenv("TEST_COMPANY")
+	var validPublicKey = os.Getenv("TEST_PUBKEY")
+	var validPrivateKey = os.Getenv("TEST_PRIVKEY")
+
+	// create a good client
+	cwClient, err := NewCwClient(validSite, validClientID, validCompany, validPublicKey, validPrivateKey)
+	require.NoError(t, err)
+
+	var tests = []struct {
+		inputPath     string
+		pageSize      CwOption
+		expected      string
+		expectedError error
+	}{
+		{"/system/info", CwOption{}, "version", nil},
+		{"/system/members", CwOption{}, "zpeters", nil},
+		{"/system/members", CwOption{}, "bhatten", nil},
+		// Make sure we force our results into pages
+		{"/system/members", CwOption{Key: "pagesize", Value: "5"}, "zpeters", nil},
+		{"/system/members", CwOption{Key: "pagesize", Value: "7"}, "bhatten", nil},
+	}
+
+	for _, tt := range tests {
+		got, err := cwClient.GetAll(tt.inputPath, tt.pageSize)
+		if tt.expectedError == nil {
+			require.NoError(t, err)
+		} else {
+			require.EqualError(t, err, tt.expectedError.Error())
+		}
+		require.Contains(t, string(got), tt.expected)
+	}
+}
+
+func TestGetAllComparedToGet(t *testing.T) {
+	// valid testing credentials - read from .env
+	// This could be an error if we are loading from the environment instead
+	_ = godotenv.Load()
+	var validSite = os.Getenv("TEST_SITE")
+	var validClientID = os.Getenv("TEST_CLIENTID")
+	var validCompany = os.Getenv("TEST_COMPANY")
+	var validPublicKey = os.Getenv("TEST_PUBKEY")
+	var validPrivateKey = os.Getenv("TEST_PRIVKEY")
+
+	// create a good client
+	cwClient, err := NewCwClient(validSite, validClientID, validCompany, validPublicKey, validPrivateKey)
+	require.NoError(t, err)
+
+	var tests = []struct {
+		inputPath string
+		pageSize  CwOption
+	}{
+		{"/system/info", CwOption{}},
+		// Max out the page size so we know that "normal" Get will get everything
+		{"/system/members", CwOption{Key: "pagesize", Value: "1000"}},
+		{"/sales/activities/statuses", CwOption{Key: "pagesize", Value: "1000"}},
+		{"/system/kpiCategories", CwOption{Key: "pagesize", Value: "1000"}},
+		{"/system/myCompany/other", CwOption{Key: "pagesize", Value: "1000"}},
+	}
+
+	for _, tt := range tests {
+		gotGet, err1 := cwClient.Get(tt.inputPath, tt.pageSize)
+		gotGetAll, err2 := cwClient.GetAll(tt.inputPath, tt.pageSize)
+
+		require.NoError(t, err1)
+		require.NoError(t, err2)
+
+		require.Equal(t, gotGetAll, gotGet)
+	}
+}
+
 func TestGetSystemInfo(t *testing.T) {
 	// valid testing credentials - read from .env
 	// This could be an error if we are loading from the environment instead
