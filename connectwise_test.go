@@ -138,7 +138,10 @@ func TestGetAll(t *testing.T) {
 		} else {
 			require.EqualError(t, err, tt.expectedError.Error())
 		}
-		require.Contains(t, string(got), tt.expected)
+		// join our slice of strings together for easier
+		// searching
+		allGot := strings.Join(got, "")
+		require.Contains(t, allGot, tt.expected)
 	}
 }
 
@@ -175,7 +178,11 @@ func TestGetAllComparedToGet(t *testing.T) {
 		require.NoError(t, err1)
 		require.NoError(t, err2)
 
-		require.Equal(t, gotGetAll, gotGet)
+		// merge slice result together - normally
+		// we page through the results and decode the json
+		gotGetAllJoined := strings.Join(gotGetAll, "")
+
+		require.Equal(t, string(gotGet), gotGetAllJoined)
 	}
 }
 

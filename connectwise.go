@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
 // SystemInfo returned from Connectwise - GET /system/info
@@ -107,7 +106,7 @@ func (c CwClient) Post(path string, payload []byte, options ...CwOption) (string
 }
 
 // GetAll returns all results by following pagination
-func (c CwClient) GetAll(path string, options ...CwOption) (jsonData []byte, err error) {
+func (c CwClient) GetAll(path string, options ...CwOption) (jsonPages []string, err error) {
 	var currentPage int = 1
 	var results []string
 
@@ -116,7 +115,7 @@ func (c CwClient) GetAll(path string, options ...CwOption) (jsonData []byte, err
 		newOpts := append(options, page)
 		resp, err := c.Get(path, newOpts...)
 		if err != nil {
-			return jsonData, err
+			return jsonPages, err
 		}
 
 		// Some requests will do normal pagination
@@ -129,17 +128,14 @@ func (c CwClient) GetAll(path string, options ...CwOption) (jsonData []byte, err
 		// pagination, they just return the same data twice
 		// so if we get that then just return lastResponse
 		if len(results) > 0 && string(resp) == string(results[0]) {
-			return []byte(resp), nil
+			return []string{string(resp)}, nil
 		}
 
 		results = append(results, string(resp))
 		currentPage++
 	}
 
-	// join our strings slice
-	res := strings.Join(results, "")
-
-	return []byte(res), nil
+	return results, nil
 }
 
 // Get is an api primitive to get data from the connectwise api
