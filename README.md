@@ -7,7 +7,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/zpeters/connectwise-go)](https://goreportcard.com/report/github.com/zpeters/connectwise-go)
 [![License](https://img.shields.io/github/license/zpeters/connectwise-go)](https://img.shields.io/github/license/zpeters/connectwise-go)
 
-**Version** v0.0.2
+**Version** v0.0.3
 
 *Connectwise* is a very simple api helper for the Connectwise Manage API.  It is meant firstly to just avoid some code duplication. It does **not** come close to covering the entire API, but it does help get you started
 
