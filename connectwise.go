@@ -60,7 +60,7 @@ func (c CwClient) GetSystemInfo(options ...CwOption) (info SystemInfo, err error
 
 // Post is an api primitive to get data from the connectwise api
 func (c CwClient) Post(path string, payload []byte, options ...CwOption) (string, error) {
-	baseURL := fmt.Sprintf("https://api-na.myconnectwise.net/%sapis/3.0", c.APIVersion.Codebase)
+	baseURL := fmt.Sprintf("https://%s/%sapis/3.0", c.APIVersion.SiteURL, c.APIVersion.Codebase)
 	url := fmt.Sprintf("%s/%s", baseURL, path)
 	client := &http.Client{}
 
@@ -140,7 +140,7 @@ func (c CwClient) GetAll(path string, options ...CwOption) (jsonPages []string, 
 
 // Get is an api primitive to get data from the connectwise api
 func (c CwClient) Get(path string, options ...CwOption) (jsonData []byte, err error) {
-	baseURL := fmt.Sprintf("https://api-na.myconnectwise.net/%sapis/3.0", c.APIVersion.Codebase)
+	baseURL := fmt.Sprintf("https://%s/%sapis/3.0", c.APIVersion.SiteURL, c.APIVersion.Codebase)
 	url := fmt.Sprintf("%s/%s", baseURL, path)
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
